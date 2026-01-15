@@ -635,111 +635,170 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _showHospitalDialog() {
     final hospitalController = TextEditingController();
     final doctorController = TextEditingController();
+    TimeOfDay? selectedTime;
 
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2196F3).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.local_hospital,
-                        color: Color(0xFF2196F3),
+                    Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2196F3).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.local_hospital,
+                            color: Color(0xFF2196F3),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        const Text(
+                          '병원 일정',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    TextField(
+                      controller: hospitalController,
+                      decoration: InputDecoration(
+                        hintText: '병원 이름 (예: 서울대병원)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2196F3),
+                            width: 2,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      '병원 일정',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: doctorController,
+                      decoration: InputDecoration(
+                        hintText: '담당 의사 성함 (예: 홍길동 교수)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2196F3),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () async {
+                        final TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: selectedTime ?? TimeOfDay.now(),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: const ColorScheme.light(
+                                  primary: Color(0xFF2196F3),
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          setDialogState(() {
+                            selectedTime = picked;
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey[400]!),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: selectedTime != null
+                                  ? const Color(0xFF2196F3)
+                                  : Colors.grey[600],
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              selectedTime != null
+                                  ? '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}'
+                                  : '진료 시간 선택',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: selectedTime != null
+                                    ? Colors.black
+                                    : Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (hospitalController.text.isNotEmpty) {
+                            _saveHospitalEvent(
+                              hospitalController.text,
+                              doctorController.text,
+                              selectedTime,
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2C4A8C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          '저장',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: hospitalController,
-                  decoration: InputDecoration(
-                    hintText: '병원 이름 (예: 서울대병원)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF2196F3),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: doctorController,
-                  decoration: InputDecoration(
-                    hintText: '담당 의사 성함 (예: 홍길동 교수)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF2196F3),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (hospitalController.text.isNotEmpty) {
-                        _saveHospitalEvent(
-                          hospitalController.text,
-                          doctorController.text,
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2C4A8C),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      '저장',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -1163,7 +1222,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   // 데이터 저장 함수들
-  void _saveHospitalEvent(String hospital, String doctor) {
+  void _saveHospitalEvent(String hospital, String doctor, TimeOfDay? time) {
     final normalizedDay = DateTime(
       _selectedDay!.year,
       _selectedDay!.month,
@@ -1178,7 +1237,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         'hospital': hospital,
         if (doctor.isNotEmpty) 'doctor': doctor,
       },
-      time: TimeOfDay.now(),
+      time: time ?? TimeOfDay.now(),
     );
 
     setState(() {
