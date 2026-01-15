@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -246,19 +247,15 @@ class _SignupScreenState extends State<SignupScreen> {
                   child: ElevatedButton(
                     onPressed: _isSignupEnabled
                         ? () {
-                            // 비밀번호 일치 확인
-                            if (_passwordController.text != _confirmPasswordController.text) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('비밀번호가 일치하지 않습니다'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                              return;
-                            }
-                            // 회원가입 로직
+                            // 임시: 백엔드 연결 전까지 아무 값이나 입력하면 로그인 되도록
                             print('가입하기 버튼 클릭');
                             print('이메일: ${_emailController.text}');
+                            // 회원가입 성공 후 홈 화면으로 이동
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => const HomeScreen(),
+                              ),
+                            );
                           }
                         : null,
                     style: ElevatedButton.styleFrom(

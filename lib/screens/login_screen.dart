@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -183,6 +184,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? () {
                           // 로그인 로직
                           print('로그인 버튼 클릭');
+                          // 홈 화면으로 이동
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const HomeScreen(),
+                            ),
+                          );
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
