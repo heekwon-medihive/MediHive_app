@@ -1387,8 +1387,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ..._buildEventDetails(event),
                 const SizedBox(height: 24),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showDeleteConfirmDialog(event);
+                      },
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                      ),
+                      label: const Text(
+                        '삭제',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: const Text('닫기'),
@@ -1400,6 +1414,78 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
         );
       },
+    );
+  }
+
+  void _showDeleteConfirmDialog(HealthEvent event) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            '삭제하시겠습니까?',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            '${event.title} 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                '취소',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteEvent(event);
+                Navigator.pop(context);
+              },
+              child: const Text(
+                '삭제',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteEvent(HealthEvent event) {
+    final normalizedDay = DateTime(
+      event.date.year,
+      event.date.month,
+      event.date.day,
+    );
+
+    setState(() {
+      _events[normalizedDay]?.remove(event);
+      if (_events[normalizedDay]?.isEmpty ?? false) {
+        _events.remove(normalizedDay);
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('기록이 삭제되었습니다.'),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 }
