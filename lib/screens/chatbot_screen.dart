@@ -18,7 +18,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     // 초기 AI 메시지 추가
     _messages.add(
       ChatMessage(
-        text: '안녕하세요, 홍길동 님! 😊\n오늘 컨디션은 어떠신가요?\n아래에서 궁금한 내용을 선택하거나\n직접 말씀해 주세요.',
+        text: '안녕하세요, 홍길동 님! 😊\n오늘 컨디션은 어떠신가요?\n위에서 궁금한 내용을 선택하거나\n직접 말씀해 주세요.',
         isUser: false,
         time: DateTime.now(),
       ),
@@ -173,6 +173,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         children: [
           _buildQuickActionCard(
             icon: '💊',
+            iconAsset: 'assets/icons/medicine-pill.png',
             label: '복약\n안내',
             onTap: () => _handleQuickAction('복약'),
           ),
@@ -183,6 +184,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
           _buildQuickActionCard(
             icon: '📅',
+            iconAsset: 'assets/icons/calendar-appointment.png',
             label: '진료\n예약',
             onTap: () => _handleQuickAction('진료'),
           ),
@@ -195,6 +197,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     required String icon,
     required String label,
     required VoidCallback onTap,
+    String? iconAsset,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -216,10 +219,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              icon,
-              style: const TextStyle(fontSize: 32),
-            ),
+            if (iconAsset != null)
+              Image.asset(
+                iconAsset,
+                width: 40,
+                height: 40,
+              )
+            else
+              Text(
+                icon,
+                style: const TextStyle(fontSize: 32),
+              ),
             const SizedBox(height: 8),
             Text(
               label,
@@ -251,17 +261,20 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               width: 36,
               height: 36,
               margin: const EdgeInsets.only(right: 8),
-              decoration: const BoxDecoration(
-                color: Color(0xFF2D5AF0), // Medi-Blue
+              decoration: BoxDecoration(
+                color: Colors.white,
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFF2D5AF0),
+                  width: 1.5,
+                ),
               ),
-              child: const Center(
-                child: Text(
-                  'AI',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+              child: ClipOval(
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Image.asset(
+                    'assets/icons/medihive_logo.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

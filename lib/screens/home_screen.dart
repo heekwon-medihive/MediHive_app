@@ -131,25 +131,55 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       child: BottomNavigationBar(
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
+            icon: Image.asset(
+              'assets/icons/home-07.png',
+              width: 24,
+              height: 24,
+              color: Colors.grey,
+            ),
+            activeIcon: Image.asset(
+              'assets/icons/home-07.png',
+              width: 24,
+              height: 24,
+              color: const Color(0xFF2C4A8C),
+            ),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            activeIcon: Icon(Icons.chat_bubble),
+            icon: Image.asset(
+              'assets/icons/bubble-chat.png',
+              width: 24,
+              height: 24,
+              color: Colors.grey,
+            ),
+            activeIcon: Image.asset(
+              'assets/icons/bubble-chat.png',
+              width: 24,
+              height: 24,
+              color: const Color(0xFF2C4A8C),
+            ),
             label: '챗봇',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.description_outlined),
             activeIcon: Icon(Icons.description),
             label: '기록지',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            activeIcon: Icon(Icons.calendar_today),
+            icon: Image.asset(
+              'assets/icons/calendar-03.png',
+              width: 24,
+              height: 24,
+              color: Colors.grey,
+            ),
+            activeIcon: Image.asset(
+              'assets/icons/calendar-03.png',
+              width: 24,
+              height: 24,
+              color: const Color(0xFF2C4A8C),
+            ),
             label: '일정',
           ),
         ],
